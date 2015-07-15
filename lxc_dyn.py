@@ -31,10 +31,11 @@ class Virtualenv():
             return os.path.join(os.getenv('HOME'), '.virtualenvs', self.name)
 
     def _default_cmd(self):
+        ''' a sane default a virtualenv path '''
         return shlex.split("virtualenv -p /usr/bin/python3 {}".format(self.venv_path))
 
     def _activate(self):
-        """ activate the virtualenv """
+        ''' activate the virtualenv '''
         activate_path = os.path.join(self.venv_path, "bin/activate_this.py")
         with open(activate_path) as f:
             code = compile(f.read(), activate_path, 'exec')
@@ -49,6 +50,7 @@ class Virtualenv():
         else:
             return 0
 
+    # [shortcuts]
     def install_ansible(self, args=None):
         return os.system('pip install ansible')
 
@@ -65,6 +67,7 @@ class Virtualenv():
         '''
         subprocess.call(shlex.split(("rm -rf {0}".format(self.venv_path))))
 
+# do self imports
 try:
     import lxc
 except ImportError:
@@ -86,11 +89,12 @@ def main():
         subprocess.call(shlex.split('pip freeze'))
     def install_flask():
         subprocess.call(shlex.split('pip install flask'))
+
     v.destroy()
     v.create()
     v.run(_)
     v.run(install_flask)
-
+    v.run(v.install_ansible)
     v.run(_)
 
 if __name__ == '__main__':
